@@ -20,8 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        path: currRepo
     - uses: ./
       with:
-        path: ./myPath
         milliseconds: 1000
         working-directory: 'test'
