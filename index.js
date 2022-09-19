@@ -11,6 +11,10 @@ async function run() {
     let workingDirectory = core.getInput("working-directory", { required: false })
     let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
     const CWD = cwd + sep
+    const RESULTS_FILE = join(CWD, "jest.results.json")
+
+    await exec(`npm test --outputFile=${RESULTS_FILE}`, [], { silent: true, cwd })
+
     filenames = fs.readdirSync(CWD);
 
     const ms = core.getInput('milliseconds');
