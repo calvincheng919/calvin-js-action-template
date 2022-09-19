@@ -22,7 +22,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         path: currRepo
-    - uses: ./
+    - uses: ./currRepo
       with:
         milliseconds: 1000
         working-directory: 'test'
