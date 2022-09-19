@@ -2,6 +2,7 @@ const { sep, join, resolve } = require("path")
 const fs = require('fs');
 const core = require('@actions/core');
 // const exec = require('@actions/exec');
+const exec = require('@actions/exec');
 const wait = require('./wait')
 
 // most @actions toolkit packages have async methods
@@ -12,8 +13,7 @@ async function run() {
     let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
     const CWD = cwd + sep
     const RESULTS_FILE = join(CWD, "jest.results.json")
-    const exec = require('@actions/exec');
-    await exec(`npm test --outputFile=${RESULTS_FILE}`, [], { silent: true, cwd })
+    await exec.exec(`npm test --outputFile=${RESULTS_FILE}`, [], { silent: true, cwd })
 
     filenames = fs.readdirSync(CWD);
 
