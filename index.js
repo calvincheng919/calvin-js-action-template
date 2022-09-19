@@ -13,7 +13,7 @@ async function run() {
     const CWD = cwd + sep
 
     const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds and Current Directory is ${CWD}...`);
+    core.info(`Waiting ${ms} milliseconds and Current Directory is ${CWD}`);
     // core.info(`working directory is ${workingDirectory} ...`);
 
     core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
