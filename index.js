@@ -13,8 +13,8 @@ async function run() {
     const CWD = cwd + sep
 
     const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
-    core.info(`working directory is ${workingDirectory} ...`);
+    core.info(`Waiting ${ms} milliseconds and Current Directory is ${CWD}...`);
+    // core.info(`working directory is ${workingDirectory} ...`);
 
     core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     await wait(parseInt(ms));
@@ -23,6 +23,7 @@ async function run() {
     // await exec.exec('touch myfile.js')
 
     core.setOutput('time', new Date().toTimeString());
+    core.setOutput('dir', CWD);
   } catch (error) {
     core.setFailed(error.message);
   }
