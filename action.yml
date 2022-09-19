@@ -6,7 +6,7 @@ inputs:
     required: true
     default: '1000'
   working-directory: 
-    default: 'test'
+    default: ''
 outputs:
   time: # output will be available to future steps
     description: 'The current time after waiting'
