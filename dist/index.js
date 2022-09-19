@@ -2984,24 +2984,32 @@ module.exports = require("util");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
+const { sep, join, resolve } = __nccwpck_require__(622)
+
 const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
-const wait = __nccwpck_require__(258);
-
+const wait = __nccwpck_require__(258)
 
 // most @actions toolkit packages have async methods
 async function run() {
+
   try {
+    let workingDirectory = core.getInput("working-directory", { required: false })
+    let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
+    const CWD = cwd + sep
+
     const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
+    core.info(`Waiting ${ms} milliseconds and Current Directory is ${CWD}...`);
+    // core.info(`working directory is ${workingDirectory} ...`);
 
     core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     await wait(parseInt(ms));
     core.info((new Date()).toTimeString());
 
-    await exec.exec('touch myfile.js')
+    // await exec.exec('touch myfile.js')
 
     core.setOutput('time', new Date().toTimeString());
+    core.setOutput('dir', CWD);
   } catch (error) {
     core.setFailed(error.message);
   }
