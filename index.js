@@ -1,5 +1,5 @@
 const { sep, join, resolve } = require("path")
-
+const fs = require('fs');
 const core = require('@actions/core');
 const exec = require('@actions/exec');
 const wait = require('./wait')
@@ -11,9 +11,10 @@ async function run() {
     let workingDirectory = core.getInput("working-directory", { required: false })
     let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
     const CWD = cwd + sep
+    filenames = fs.readdirSync(CWD);
 
     const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds and Current Directory is ${CWD}`);
+    core.info(`Waiting ${ms} milliseconds and Current Directory has these files ${filenames}`);
     // core.info(`working directory is ${workingDirectory} ...`);
 
     core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
