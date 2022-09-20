@@ -2999,7 +2999,7 @@ const packageJson = {
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "test": "jest sample.spec.js --ci --reporters=default --reporters=jest-junit",
+    "test": "jest marketplace.spec.js --ci --reporters=default --reporters=jest-junit",
     // "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
     "all": "npm run lint && npm run prepare && npm run test"
   },
