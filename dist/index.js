@@ -3012,8 +3012,8 @@ async function run() {
     const RESULTS_FILE = join(CWD, "jest.results.json")
 
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
-    // await exec.exec('npm test',[], {CWD})
-    await exec.exec('jest __/tests__/sample.spec.js')
+    await exec.exec('npm install',[], {CWD})
+    // await exec.exec('jest __/tests__/sample.spec.js')
 
     filenames = fs.readdirSync(CWD);
 
