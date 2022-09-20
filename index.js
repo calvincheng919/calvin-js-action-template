@@ -10,6 +10,7 @@ const data = require('./package_.json')
 async function run() {
 
   readWritePackage();
+  readWriteTestFile();
 
   try {
     let workingDirectory = core.getInput("working-directory", { required: false })
@@ -19,7 +20,7 @@ async function run() {
 
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
     await exec.exec('npm install -g jest',[], {CWD})
-    await exec.exec(`jest __/tests__/sample.spec.js`, {CWD})
+    // await exec.exec(`jest sample.spec.js`, {CWD})
 
     filenames = fs.readdirSync(CWD);
 
@@ -49,6 +50,17 @@ function readWritePackage() {
       console.log("Successfully Written to File.");
     });
 // })
+}
+
+function readWriteTestFile() {
+  fs.readFile("./__tests__/sample.spec.js", "utf-8", (err, data) => {
+    if (err) { console.log(err) }
+    console.log(data);
+    fs.writeFile("sample.spec.js", data, (err) => {
+      if (err) console.log(err);
+      console.log("Successfully Written to File.");
+    });
+})
 }
 
 run();
