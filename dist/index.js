@@ -2843,7 +2843,7 @@ module.exports = wait;
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"javascript-action","version":"1.0.0","description":"JavaScript Action Template","main":"index.js","scripts":{"lint":"eslint .","prepare":"ncc build index.js -o dist --source-map --license licenses.txt","test":"jest /__tests__/ --json --outputFile=\'jest.results.json\'","all":"npm run lint && npm run prepare && npm run test"},"repository":{"type":"git","url":"git+https://github.com/actions/javascript-action.git"},"keywords":["GitHub","Actions","JavaScript"],"author":"","license":"MIT","bugs":{"url":"https://github.com/actions/javascript-action/issues"},"homepage":"https://github.com/actions/javascript-action#readme","dependencies":{"@actions/core":"^1.2.5","@actions/exec":"^1.1.1"},"devDependencies":{"@vercel/ncc":"^0.31.1","eslint":"^8.0.0","jest":"^27.2.5"}}');
+module.exports = JSON.parse('{"name":"javascript-action","version":"1.0.0","description":"JavaScript Action Template","main":"index.js","scripts":{"lint":"eslint .","prepare":"ncc build index.js -o dist --source-map --license licenses.txt","test":"jest sample.spec.js --ci --reporters=default --reporters=jest-junit","all":"npm run lint && npm run prepare && npm run test"},"jest-junit":{"outputDirectory":"reports","outputName":"jest-junit.xml","ancestorSeparator":" › ","uniqueOutputName":"false","suiteNameTemplate":"{filepath}","classNameTemplate":"{classname}","titleTemplate":"{title}"},"repository":{"type":"git","url":"git+https://github.com/actions/javascript-action.git"},"keywords":["GitHub","Actions","JavaScript"],"author":"","license":"MIT","bugs":{"url":"https://github.com/actions/javascript-action/issues"},"homepage":"https://github.com/actions/javascript-action#readme","dependencies":{"@actions/core":"^1.2.5","@actions/exec":"^1.1.1","jest-junit":"^14.0.1"},"devDependencies":{"@vercel/ncc":"^0.31.1","eslint":"^8.0.0","jest":"^27.2.5"}}');
 
 /***/ }),
 
@@ -3026,7 +3026,7 @@ async function run() {
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
     await exec.exec('npm install -g jest',[], {CWD})
     await exec.exec('npm install -g jest-junit',[], {CWD})
-    await exec.exec(`jest sample.spec.js --reporters="default" --reporters="jest-junit"`, {CWD})
+    await exec.exec(`jest sample.spec.js --ci --reporters="default" --reporters="jest-junit"`,[], {CWD})
 
     filenames = fs.readdirSync(CWD);
 

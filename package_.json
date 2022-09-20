@@ -6,8 +6,17 @@
   "scripts": {
     "lint": "eslint .",
     "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
-    "test": "jest /__tests__/ --json --outputFile='jest.results.json'",
+    "test": "jest sample.spec.js --ci --reporters=default --reporters=jest-junit",
     "all": "npm run lint && npm run prepare && npm run test"
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "jest-junit.xml",
+    "ancestorSeparator": " › ",
+    "uniqueOutputName": "false",
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
   },
   "repository": {
     "type": "git",
@@ -26,7 +35,8 @@
   "homepage": "https://github.com/actions/javascript-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.5",
-    "@actions/exec": "^1.1.1"
+    "@actions/exec": "^1.1.1",
+    "jest-junit": "^14.0.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.31.1",
