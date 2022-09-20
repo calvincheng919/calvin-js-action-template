@@ -2988,7 +2988,7 @@ const { sep, join, resolve } = __nccwpck_require__(622)
 const fs = __nccwpck_require__(747);
 const core = __nccwpck_require__(186);
 // const exec = require('@actions/exec');
-const exec = __nccwpck_require__(514);
+
 const wait = __nccwpck_require__(258)
 
 // most @actions toolkit packages have async methods
@@ -2999,6 +2999,8 @@ async function run() {
     let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
     const CWD = cwd + sep
     const RESULTS_FILE = join(CWD, "jest.results.json")
+    const exec = __nccwpck_require__(514);
+    
     await exec.exec(`npm test --outputFile=${RESULTS_FILE}`, [], { silent: true, cwd })
 
     filenames = fs.readdirSync(CWD);
