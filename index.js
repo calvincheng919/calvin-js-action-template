@@ -13,8 +13,8 @@ const packageJson = {
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
     "test": "jest sample.spec.js --ci --reporters=default --reporters=jest-junit",
+    // "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
     "all": "npm run lint && npm run prepare && npm run test"
   },
   "jest-junit": {
@@ -43,12 +43,13 @@ const packageJson = {
   "homepage": "https://github.com/actions/javascript-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.5",
-    "@actions/exec": "^1.1.1"
+    "@actions/exec": "^1.1.1",
   },
   "devDependencies": {
     "@vercel/ncc": "^0.31.1",
     "eslint": "^8.0.0",
-    "jest": "^27.2.5"
+    "jest": "^27.2.5",
+    "jest-junit": "^14.0.1"
   }
 }
 

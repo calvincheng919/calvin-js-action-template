@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="4" failures="0" errors="0" time="0.235">
+  <testsuite name="sample.spec.js" errors="0" failures="0" skipped="0" timestamp="2022-09-20T22:44:14" time="0.161" tests="2">
+    <testcase classname="my sample test" name="one is one" time="0.001">
+    </testcase>
+    <testcase classname="my sample test" name="another" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="__tests__/sample.spec.js" errors="0" failures="0" skipped="0" timestamp="2022-09-20T22:44:15" time="0.026" tests="2">
+    <testcase classname="my sample test" name="one is one" time="0">
+    </testcase>
+    <testcase classname="my sample test" name="another" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>
