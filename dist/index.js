@@ -3069,7 +3069,8 @@ async function run() {
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
     await exec.exec('npm install -g jest',[], {CWD})
     await exec.exec('npm install -g jest-junit',[], {CWD})
-    await exec.exec(`jest sample.spec.js --ci --reporters="default" --reporters="jest-junit"`,[], {CWD})
+    // await exec.exec(`jest sample.spec.js --ci --reporters="default" --reporters="jest-junit"`,[], {CWD})
+    await exec.exec(`npm test`,[], {CWD})
 
     filenames = fs.readdirSync(CWD);
 
