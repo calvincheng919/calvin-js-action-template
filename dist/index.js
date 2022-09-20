@@ -3013,6 +3013,7 @@ async function run() {
 
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
     // await exec.exec('npm test',[], {CWD})
+    await exec.exec('touch myfile.js')
 
     filenames = fs.readdirSync(CWD);
 
@@ -3024,7 +3025,6 @@ async function run() {
     await wait(parseInt(ms));
     core.info((new Date()).toTimeString());
 
-    // await exec.exec('touch myfile.js')
 
     core.setOutput('time', new Date().toTimeString());
     core.setOutput('dir', CWD);
