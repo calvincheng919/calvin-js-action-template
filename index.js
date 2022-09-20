@@ -14,7 +14,7 @@ const packageJson = {
   "scripts": {
     "lint": "eslint .",
     "test": "jest marketplace.spec.js --ci --reporters=default --reporters=jest-junit",
-    // "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
+    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
     "all": "npm run lint && npm run prepare && npm run test"
   },
   "jest-junit": {
@@ -65,7 +65,7 @@ const Ajv = require('ajv')
 const fs = require('fs')
 const process = require('process')
 const ajv = new Ajv()
-process.chdir('../')
+// process.chdir('../')
 const cwd = process.cwd();
 const marketplaceRaw = fs.readFileSync(\`\${cwd}/marketplace.json\`, 'utf8');
 
