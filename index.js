@@ -4,7 +4,58 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 const wait = require('./wait')
-const data = require('./package_.json')
+// const data = require('./package_.json')
+
+const packageJson = {
+  "name": "javascript-action",
+  "version": "1.0.0",
+  "description": "JavaScript Action Template",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
+    "test": "jest sample.spec.js --ci --reporters=default --reporters=jest-junit",
+    "all": "npm run lint && npm run prepare && npm run test"
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "jest-junit.xml",
+    "ancestorSeparator": " › ",
+    "uniqueOutputName": "false",
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/actions/javascript-action.git"
+  },
+  "keywords": [
+    "GitHub",
+    "Actions",
+    "JavaScript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/actions/javascript-action/issues"
+  },
+  "homepage": "https://github.com/actions/javascript-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.5",
+    "@actions/exec": "^1.1.1",
+    "jest-junit": "^14.0.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.31.1",
+    "eslint": "^8.0.0",
+    "jest": "^27.2.5"
+  }
+}
+
+
+
+
 
 const testString = `
 describe('my sample test', ()=> {
@@ -52,11 +103,8 @@ async function run() {
 }
 
 function readWritePackage() {
-  // fs.readFile("package_.json", "utf-8", (err, data) => {
-  //   if (err) { console.log(err) }
-  //   console.log(data);
 
-    fs.writeFile("package.json", JSON.stringify(data), (err) => {
+    fs.writeFile("package.json", JSON.stringify(packageJson), (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
