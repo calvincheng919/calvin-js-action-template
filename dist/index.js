@@ -3028,6 +3028,9 @@ const packageJson = {
   },
   "homepage": "https://github.com/actions/javascript-action#readme",
   "dependencies": {
+    "ajv": "^8.11.0",
+    "lookml-parser": "^6.5",
+    "find-duplicated-property-keys": "^1.2.7",
     "@actions/core": "^1.2.5",
     "@actions/exec": "^1.1.1",
   },
@@ -3040,13 +3043,54 @@ const packageJson = {
 }
 
 const testString = `
-describe('my sample test', ()=> {
-  test('one is one', ()=> {
-      expect(1).toBe(1)
-  })
-  test('another', ()=> {
-      expect(1).toBe(1)
-  })
+// Looker Marketplace Automation Tests
+
+const lookmlParser = require('lookml-parser')
+const findDuplicatedPropertyKeys = require('find-duplicated-property-keys');
+const Ajv = require('ajv')
+const fs = require('fs')
+const process = require('process')
+const ajv = new Ajv()
+process.chdir('../')
+const cwd = process.cwd();
+const marketplaceRaw = fs.readFileSync(\`\${cwd}/main/marketplace.json\`, 'utf8');
+
+try {
+    var marketplace = JSON.parse(marketplaceRaw)
+} catch(e) {
+    console.log('marketplace is not valid json')
+}
+
+let schema = {
+    type: "object",
+    additionalProperties: true
+  }
+
+  describe('Marketplace Automation Tests', ()=> {
+
+    test('License File Exists', ()=> {
+        const fileExists = fs.existsSync(\`\${cwd}/main/LICENSE\`);
+        expect(fileExists).toBe(true);
+    })
+    test('READEME File Exists', ()=> {
+        const fileExists = fs.existsSync(\`\${cwd}/main/readme.md\`);
+        expect(fileExists).toBe(true);
+    })
+    test('Marketplace JSON Exists', ()=> {
+        const fileExists = fs.existsSync(\`\${cwd}/main/marketplace.json\`);
+        expect(fileExists).toBe(true);
+    })
+    test('Manifest File Exists', ()=> {
+        const fileExists = fs.existsSync(\`\${cwd}/main/manifest.lkml\`);
+        expect(fileExists).toBe(true);
+    })
+    test('At Least One Dashboard File Exists', ()=> {
+        const files = fs.readdirSync(\`\${cwd}/main/dashboards/\`);
+        dashboardFiles = files.filter( item => {
+            return item.includes('dashboard.lookml')
+        })
+        expect(dashboardFiles.length).toBeGreaterThan(0);
+    }) 
 })
 `
 
@@ -3097,7 +3141,7 @@ function readWritePackage() {
 
 function readWriteTestFile() {
 
-    fs.writeFile("sample.spec.js", testString, (err) => {
+    fs.writeFile("marketplace.spec.js", testString, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written tests to File.");
     });
