@@ -43,8 +43,7 @@ const packageJson = {
   "homepage": "https://github.com/actions/javascript-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.5",
-    "@actions/exec": "^1.1.1",
-    "jest-junit": "^14.0.1"
+    "@actions/exec": "^1.1.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.31.1",
@@ -52,10 +51,6 @@ const packageJson = {
     "jest": "^27.2.5"
   }
 }
-
-
-
-
 
 const testString = `
 describe('my sample test', ()=> {
@@ -81,9 +76,10 @@ async function run() {
     const RESULTS_FILE = join(CWD, "jest.results.json")
 
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
-    await exec.exec('npm install -g jest',[], {CWD})
-    await exec.exec('npm install -g jest-junit',[], {CWD})
+    // await exec.exec('npm install -g jest',[], {CWD})
+    // await exec.exec('npm install -g jest-junit',[], {CWD})
     // await exec.exec(`jest sample.spec.js --ci --reporters="default" --reporters="jest-junit"`,[], {CWD})
+    await exec.exec(`npm install`,[], {CWD})
     await exec.exec(`npm test`,[], {CWD})
 
     filenames = fs.readdirSync(CWD);
