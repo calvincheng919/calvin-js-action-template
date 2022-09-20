@@ -2839,6 +2839,14 @@ module.exports = wait;
 
 /***/ }),
 
+/***/ 642:
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"name":"javascript-action","version":"1.0.0","description":"JavaScript Action Template","main":"index.js","scripts":{"lint":"eslint .","prepare":"ncc build index.js -o dist --source-map --license licenses.txt","test":"jest /__tests__/ --json --outputFile=\'jest.results.json\'","all":"npm run lint && npm run prepare && npm run test"},"repository":{"type":"git","url":"git+https://github.com/actions/javascript-action.git"},"keywords":["GitHub","Actions","JavaScript"],"author":"","license":"MIT","bugs":{"url":"https://github.com/actions/javascript-action/issues"},"homepage":"https://github.com/actions/javascript-action#readme","dependencies":{"@actions/core":"^1.2.5","@actions/exec":"^1.1.1"},"devDependencies":{"@vercel/ncc":"^0.31.1","eslint":"^8.0.0","jest":"^27.2.5"}}');
+
+/***/ }),
+
 /***/ 357:
 /***/ ((module) => {
 
@@ -2990,9 +2998,12 @@ const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
 
 const wait = __nccwpck_require__(258)
+const data = __nccwpck_require__(642)
 
 // most @actions toolkit packages have async methods
 async function run() {
+
+  readWritePackage();
 
   try {
     let workingDirectory = core.getInput("working-directory", { required: false })
@@ -3000,7 +3011,8 @@ async function run() {
     const CWD = cwd + sep
     const RESULTS_FILE = join(CWD, "jest.results.json")
 
-    await exec.exec(`npm test --outputFile=${RESULTS_FILE}`, [])
+    // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
+    await exec.exec('npm test')
 
     filenames = fs.readdirSync(CWD);
 
@@ -3019,6 +3031,18 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+function readWritePackage() {
+  // fs.readFile("package_.json", "utf-8", (err, data) => {
+  //   if (err) { console.log(err) }
+  //   console.log(data);
+
+    fs.writeFile("package.json", JSON.stringify(data), (err) => {
+      if (err) console.log(err);
+      console.log("Successfully Written to File.");
+    });
+// })
 }
 
 run();

@@ -4,9 +4,12 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 const wait = require('./wait')
+const data = require('./package_.json')
 
 // most @actions toolkit packages have async methods
 async function run() {
+
+  readWritePackage();
 
   try {
     let workingDirectory = core.getInput("working-directory", { required: false })
@@ -14,7 +17,8 @@ async function run() {
     const CWD = cwd + sep
     const RESULTS_FILE = join(CWD, "jest.results.json")
 
-    await exec.exec(`npm test --outputFile=${RESULTS_FILE}`, [])
+    // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
+    await exec.exec('npm test')
 
     filenames = fs.readdirSync(CWD);
 
@@ -33,6 +37,18 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+function readWritePackage() {
+  // fs.readFile("package_.json", "utf-8", (err, data) => {
+  //   if (err) { console.log(err) }
+  //   console.log(data);
+
+    fs.writeFile("package.json", JSON.stringify(data), (err) => {
+      if (err) console.log(err);
+      console.log("Successfully Written to File.");
+    });
+// })
 }
 
 run();
