@@ -13,5 +13,10 @@ outputs:
   dir:
     description: 'current directory'
 runs:
+  using: "composite"
+  steps:
+    - run: npm install
+      shell: bash
+runs:
   using: 'node16'
   main: 'dist/index.js'
