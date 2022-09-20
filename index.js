@@ -31,13 +31,13 @@ async function run() {
 
     // await exec.exec(`npm test --testLocationInResults --json --outputFile=${RESULTS_FILE} --coverage --reporters="default" --reporters="jest-junit"`, [])
     await exec.exec('npm install -g jest',[], {CWD})
-    await exec.exec(`jest sample.spec.js`, {CWD})
+    await exec.exec('npm install -g jest-junit',[], {CWD})
+    await exec.exec(`jest sample.spec.js --reporters="default" --reporters="jest-junit"`, {CWD})
 
     filenames = fs.readdirSync(CWD);
 
     const ms = core.getInput('milliseconds');
     core.info(`Waiting ${ms} milliseconds and Current Directory has these files ${filenames}`);
-    // core.info(`working directory is ${workingDirectory} ...`);
 
     core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
     await wait(parseInt(ms));
