@@ -4,7 +4,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 const wait = require('./wait')
-// const data = require('./package_.json')
+const data = require('./package_.json')
 
 const packageJson = {
   "name": "javascript-action",
@@ -46,7 +46,7 @@ const packageJson = {
     "lookml-parser": "^6.5",
     "find-duplicated-property-keys": "^1.2.7",
     "@actions/core": "^1.2.5",
-    "@actions/exec": "^1.1.1",
+    "@actions/exec": "^1.1.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.31.1",
@@ -146,11 +146,10 @@ async function run() {
 
 function readWritePackage() {
 
-    fs.writeFile("package.json", JSON.stringify(packageJson), (err) => {
+    fs.writeFile("package.json", JSON.stringify(data), (err) => {
       if (err) console.log(err);
       console.log("Successfully Written to File.");
     });
-// })
 }
 
 function readWriteTestFile() {
