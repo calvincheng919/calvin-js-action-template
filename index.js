@@ -60,6 +60,7 @@ const package = {
 const tests = `
 // Looker Marketplace Automation Tests
 
+const { sep, join, resolve, path } = require("path")
 const lookmlParser = require('lookml-parser')
 const findDuplicatedPropertyKeys = require('find-duplicated-property-keys');
 const Ajv = require('ajv')
