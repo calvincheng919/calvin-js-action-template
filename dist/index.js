@@ -3185,7 +3185,7 @@ describe('Testing constants:', ()=>{
 
 
 describe('Verify File Extensions: ', ()=> {
-    const rootFiles = fs.readdirSync(\`\${cwd}/main\`);
+    const rootFiles = fs.readdirSync(\`\${cwd}\`);
     const viewsFolderExists = fs.existsSync(\`\${cwd}/views\`)
     const exploresFolderExists = fs.existsSync(\`\${cwd}/explores\`)
 
