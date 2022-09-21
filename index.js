@@ -283,7 +283,7 @@ function readWritePackage() {
 
 function readWriteTestFile() {
 
-  fs.readFile('marketplace.spec.js', "utf8", (err,data) => {
+  fs.readFile('./marketplace.spec.js', "utf8", (err, data ) => {
     fs.writeFile("marketplace.spec.js", data, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written tests to File.");
