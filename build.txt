@@ -1,1 +1,1 @@
-"prepare": "ncc build index.js -o dist --source-map --license licenses.txt"
+"prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
