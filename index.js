@@ -4,7 +4,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 const wait = require('./wait')
-const data = require('./package_.json')
+const data = require('./package_.json') 
 
 const packageJson = {
   "name": "javascript-action",
