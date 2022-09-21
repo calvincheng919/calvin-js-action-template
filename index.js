@@ -4,7 +4,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 const wait = require('./wait')
-const data = require('./package_.json') 
+// const data = require('./package_.json') 
 
 // most @actions toolkit packages have async methods
 async function run() {
@@ -40,10 +40,13 @@ async function run() {
 
 function readWritePackage() {
 
-    fs.writeFile("package.json", JSON.stringify(data), (err) => {
+  fs.readFile('package_.json', (err, buf) => {
+    if (err) console.error(err)
+    fs.writeFile("package.json", buf, (err) => {
       if (err) console.log(err);
-      console.log("Successfully Written to File.");
+      console.log("Successfully Written package.json to File.");
     });
+  })
 }
 
 function readWriteTestFile() {
