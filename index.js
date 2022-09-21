@@ -46,6 +46,7 @@ const package = {
     "ajv": "^8.11.0",
     "lookml-parser": "^6.5",
     "find-duplicated-property-keys": "^1.2.7",
+    "path": "^0.12.7",
     "@actions/core": "^1.2.5",
     "@actions/exec": "^1.1.1"
   },
@@ -60,7 +61,7 @@ const package = {
 const tests = `
 // Looker Marketplace Automation Tests
 
-const { sep, join, resolve, path } = require("path")
+const path = require("path")
 const lookmlParser = require('lookml-parser')
 const findDuplicatedPropertyKeys = require('find-duplicated-property-keys');
 const Ajv = require('ajv')
