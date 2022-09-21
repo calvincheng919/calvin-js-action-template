@@ -1,4 +1,4 @@
-const { sep, join, resolve } = require("path")
+const { sep, join, resolve, path } = require("path")
 const fs = require('fs');
 const core = require('@actions/core');
 const exec = require('@actions/exec');
