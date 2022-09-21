@@ -5,7 +5,6 @@ const exec = require('@actions/exec');
 
 const wait = require('./wait')
 const package = require('./package_.json') 
-// const tests = require('./marketplace_.spec.txt')
 
 // const package_ = {
 //   "name": "javascript-action",
@@ -273,6 +272,15 @@ async function run() {
   }
 }
 
+function readModuleFile(path, callback) {
+  try {
+      const filename = require.resolve(path);
+      fs.readFile(filename, 'utf8', callback);
+  } catch (e) {
+      callback(e);
+  }
+}
+
 function readWritePackage() {
 
     fs.writeFile("package.json", JSON.stringify(package), (err) => {
@@ -282,13 +290,13 @@ function readWritePackage() {
 }
 
 function readWriteTestFile() {
-
-  fs.readFile('./marketplace.spec.js', "utf8", (err, data ) => {
-    fs.writeFile("marketplace.spec.js", data, (err) => {
+  readModuleFile('./marketplace.spec.js', (err, data) => {
+    fs.writeFile('marketplace.spec.js', data, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written tests to File.");
-    });
+    })
   })
+  
 }
 
 run();

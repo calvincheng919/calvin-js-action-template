@@ -2999,7 +2999,6 @@ const exec = __nccwpck_require__(514);
 
 const wait = __nccwpck_require__(258)
 const package = __nccwpck_require__(642) 
-// const tests = require('./marketplace_.spec.txt')
 
 // const package_ = {
 //   "name": "javascript-action",
@@ -3267,6 +3266,15 @@ async function run() {
   }
 }
 
+function readModuleFile(path, callback) {
+  try {
+      const filename = require.resolve(path);
+      fs.readFile(filename, 'utf8', callback);
+  } catch (e) {
+      callback(e);
+  }
+}
+
 function readWritePackage() {
 
     fs.writeFile("package.json", JSON.stringify(package), (err) => {
@@ -3276,13 +3284,13 @@ function readWritePackage() {
 }
 
 function readWriteTestFile() {
-
-  fs.readFile('./marketplace.spec.js', "utf8", (err, data ) => {
-    fs.writeFile("marketplace.spec.js", data, (err) => {
+  readModuleFile('./marketplace.spec.js', (err, data) => {
+    fs.writeFile('marketplace.spec.js', data, (err) => {
       if (err) console.log(err);
       console.log("Successfully Written tests to File.");
-    });
+    })
   })
+  
 }
 
 run();
