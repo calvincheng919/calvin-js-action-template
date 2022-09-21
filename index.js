@@ -4,10 +4,10 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 const wait = require('./wait')
-// const package = require('./package_.json') 
+const package = require('./package_.json') 
 // const tests = require('./marketplace_.spec.txt')
 
-const package = {
+const package_ = {
   "name": "javascript-action",
   "version": "1.0.0",
   "description": "JavaScript Action Template",
@@ -88,7 +88,7 @@ describe('Marketplace Automation Tests', ()=> {
         const fileExists = fs.existsSync(\`\${cwd}/LICENSE\`);
         expect(fileExists).toBe(true);
     })
-    test('READEME File Exists', ()=> {
+    test('README File Exists', ()=> {
         const fileExists = fs.existsSync(\`\${cwd}/readme.md\`);
         expect(fileExists).toBe(true);
     })
@@ -251,7 +251,7 @@ async function run() {
     let workingDirectory = core.getInput("working-directory", { required: false })
     let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
     const CWD = cwd + sep
-    const RESULTS_FILE = join(CWD, "jest.results.json")
+    // const RESULTS_FILE = join(CWD, "jest.results.json")
 
     await exec.exec(`npm install`,[], {CWD})
     await exec.exec(`npm test`,[], {CWD})
