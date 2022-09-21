@@ -2839,6 +2839,14 @@ module.exports = wait;
 
 /***/ }),
 
+/***/ 642:
+/***/ ((module) => {
+
+"use strict";
+module.exports = JSON.parse('{"name":"javascript-action","version":"1.0.0","description":"JavaScript Action Template","main":"index.js","scripts":{"lint":"eslint .","test":"jest marketplace.spec.js --ci --reporters=default --reporters=jest-junit","all":"npm run lint && npm run prepare && npm run test"},"jest-junit":{"outputDirectory":"reports","outputName":"jest-junit.xml","ancestorSeparator":" › ","uniqueOutputName":"false","suiteNameTemplate":"{filepath}","classNameTemplate":"{classname}","titleTemplate":"{title}"},"repository":{"type":"git","url":"git+https://github.com/actions/javascript-action.git"},"keywords":["GitHub","Actions","JavaScript"],"author":"","license":"MIT","bugs":{"url":"https://github.com/actions/javascript-action/issues"},"homepage":"https://github.com/actions/javascript-action#readme","dependencies":{"ajv":"^8.11.0","lookml-parser":"^6.5","find-duplicated-property-keys":"^1.2.7","@actions/core":"^1.2.5","@actions/exec":"^1.1.1"},"devDependencies":{"@vercel/ncc":"^0.31.1","eslint":"^8.0.0","jest":"^27.2.5","jest-junit":"^14.0.1"}}');
+
+/***/ }),
+
 /***/ 357:
 /***/ ((module) => {
 
@@ -2990,7 +2998,7 @@ const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
 
 const wait = __nccwpck_require__(258)
-// const data = require('./package_.json') 
+const package = __nccwpck_require__(642) 
 
 // most @actions toolkit packages have async methods
 async function run() {
@@ -3026,13 +3034,13 @@ async function run() {
 
 function readWritePackage() {
 
-  fs.readFile('package_.json', (err, buf) => {
-    if (err) console.error(err)
-    fs.writeFile("package.json", buf, (err) => {
+  // fs.readFile('package_.json', (err, buf) => {
+  //   if (err) console.error(err)
+    fs.writeFile("package.json", JSON.stringify(package), (err) => {
       if (err) console.log(err);
       console.log("Successfully Written package.json to File.");
     });
-  })
+  // })
 }
 
 function readWriteTestFile() {
