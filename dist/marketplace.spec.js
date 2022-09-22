@@ -1,4 +1,3 @@
- 
 // Looker Marketplace Automation Tests
 
 const path = require("path")

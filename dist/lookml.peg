@@ -1,0 +1,277 @@
+{
+	/* encodeProperty should match definition in lib/common/encode-property.js */
+	function encodeProperty(prop){
+		if(typeof prop !== 'string' && prop !== parseInt(prop)){
+			throw "Property ("+prop+") must be a string or integer"
+			}
+		if(prop[0]==='$'
+		|| ['__proto__', 'prototype', 'constructor'].includes(prop)
+		){return '$'+prop}
+		return prop
+		}
+
+	function assignSuper(obj,type,name){
+		//Recursive calls inside forEach seems intensive. Deep trees could scale poorly. Refactor at some point.
+		if(!type || !name){return}
+		if(isObject(obj)){
+			if(obj.$type && obj.$type!=type){obj["$"+type]=name}
+			Object.values(obj).forEach(subObj => assignSuper(subObj, type, name))
+			}
+		if(Array.isArray(obj)){
+			obj.forEach(subObj => assignSuper(subObj, type, name))
+			}
+		return
+		}
+	function groupDeclarations(declarations){
+		const unnamedTypeCardinality = declarations.reduce((counts, declaration) => {
+			if(!declaration.$type){return counts}
+			if(declaration.$name){return counts}
+			return {
+				...counts,
+				[encodeProperty(declaration.$type)]: (counts[encodeProperty(declaration.$type)]||0) + 1
+				}
+			}, {})
+		const $strings = []
+		const unnamedTypeCount = new Map()
+		declarations.forEach(function addDeclarationStringsToStrings(p){
+			try{
+				if(!Array.isArray(p.$strings)){
+					//Not a declaration (or element), i.e. whitespace & comments
+					$strings.push(p)
+					return
+					}
+				
+				//Value is its own collection, it will have strings within it and we just want to reference it
+				if(isObject(p.$value)){
+					if(p.$name){ //Named parameter, e.g. a view or dimension
+						$strings.push(`@${p.$type}.${p.$name}`)
+						return
+						}
+					//Cardinality 1
+					if(unnamedTypeCardinality[encodeProperty(p.$type)]===1){
+						$strings.push(`@${p.$type}`)
+						return
+						}
+					//Cardinality 2+
+					else {
+						const count = (unnamedTypeCount.get(p.$type) || 0) + 1
+						unnamedTypeCount.set(p.$type, count)
+						$strings.push(`@${p.$type}.${count-1}`)
+						return
+						}
+					}
+				if(Array.isArray(p.$value)){
+					if(unnamedTypeCardinality[encodeProperty(p.$type)]>1){
+						//Not allowed in LookML AFAIK, and not representable by our AST
+					}
+
+					}
+				//Primitive parameter, group strings into a sub-array for atomic handling
+				{
+					
+					//Cardinality 1 / Primitive
+					if(unnamedTypeCardinality[encodeProperty(p.$type)]===1){
+						$strings.push([`${p.$type}`, ...p.$strings])
+						return
+						}
+					//Cardinality 2+
+					else {
+						const count = (unnamedTypeCount.get(p.$type) || 0) + 1
+						unnamedTypeCount.set(p.$type, count)
+						$strings.push([`${p.$type}.${count-1}`, ...p.$strings])
+						return
+						}
+					}
+				}catch(exception){console.error({declarations, p, $strings, exception})}
+			})
+		
+		const collection = {}
+		declarations.forEach(function addParamValueToCollection(param){
+			try{
+				const {$strings, $type, $name, $value} = param
+				const safeType = $type && encodeProperty($type)
+				const safeName = $name && encodeProperty($name)
+				if(!$type){
+					return
+					}
+				let annotatedValue = $value
+				if(isObject($value)){
+					annotatedValue = {
+						$strings,
+						$type,
+						$name,
+						...$value
+						}
+					assignSuper(annotatedValue,$type,$name)
+					}
+				if($name){ //Named Parameter, use an object/hashmap
+					collection[safeType] = collection[safeType] || {};
+					if($name[0]==='+'){ //Refinement
+						collection[safeType][safeName] = collection[safeType][safeName] || [];
+						collection[safeType][safeName].push(annotatedValue);
+						return
+						}
+					//Non-refinement
+					collection[safeType][safeName]=annotatedValue;
+					return
+					}
+				//Unnamed parameter, use a single value or array of values
+				if(unnamedTypeCardinality[safeType]==1){
+					collection[safeType] = annotatedValue
+					return
+					}
+				collection[safeType] = collection[safeType] || []
+				collection[safeType].push(annotatedValue)
+
+				}
+			catch(exception){console.error({declarations, param, collection, exception})}
+			})
+		return {...collection, $strings}
+		}
+	function isObject(o){return o && typeof o=="object" && !o.push}
+	function replace(old,nu){return x=>x===old?nu:x}
+}
+
+// An `Element` wraps a value, and is represented by an object having at least a $value property and a $strings property
+// A `Declaration` represents a type, optional name, and an element
+
+declarationSet = ds:(declarationOr_)* {return groupDeclarations(ds);}
+
+declarationOr_  = 
+	whitespace
+	/ comment
+	/ objectDeclaration // TODO: Add a test to determine how to parse `html: foo {} #;;` probably as a double semi block, so need to flip order of these
+	/ blockDeclaration
+	/ genericDeclaration
+
+objectDeclaration =
+	$type:atom _1:_ ":" _2:_ $name:atom? _3:_ "{" _4:_ el:declarationSet _5:_ "}"
+	{
+	const {$strings, ...innerValue} = el;
+	return {
+		$type,
+		...($name?{$name}:{}),
+		$value:innerValue,
+		$strings:["@$type", ..._1, ":", ..._2, ($name?"@$name":""), ..._3, "{", ..._4, ...$strings, ..._5, "}"].filter(Boolean)
+		}}
+
+blockDeclaration =
+	$type:blockAtom _1:_ ":" el:doubleSemiBlockElement
+	{return{
+		$type,
+		$value: el.$value,
+		$strings: [$type, ..._1, ":", ...el.$strings].filter(Boolean),
+		}}
+	
+genericDeclaration = 
+	$type:atom _1:_ ":" _2:_ el:(emptyListElement / listElement / mapElement / quotedStringElement / atomElement)
+	{return {
+		$type,
+		$value: el.$value,
+		$strings:[$type, ..._1, ":", ..._2, ...el.$strings].filter(Boolean)
+		}}
+
+emptyListElement = 
+	"[" _:_ "]" 
+	{return {
+		$value: [],
+		$strings: ["[", ..._, "]"].filter(Boolean)
+		}}
+
+
+listElement =
+	"[" _0:_ln leading:(_ ",")?
+	body:( _ stringOrAtomElement _ ","  _ln )*
+	tail:( _ stringOrAtomElement _ ","? _   )?
+	_last:_
+	"]" 
+	{return {
+		$value: [
+			...body,
+			...tail?[tail]:[]
+			]
+			.map(([_1,el])=>el.$value),
+		$strings:[
+			"[",
+			..._0,
+			...leading?[...leading[0], leading[1]]:[],
+			...[
+				...body,
+				...tail?[tail]:[]
+				]
+				.map(([_1, bodyEl, _2, trailing, _3], i) =>
+					[`${i}`, ..._1, ...bodyEl.$strings, ..._2, trailing, ..._3].filter(Boolean)
+					),
+			..._last,
+			"]"
+			].filter(Boolean)
+		}}
+
+mapElement = 
+	"[" _0:_ln leading:(_ ",")?
+	body:( _ atom _ ":" _ stringOrAtomElement _ ","  _ln )*
+	tail:( _ atom _ ":" _ stringOrAtomElement _ ","? _   )? 
+	_last:_
+	"]" 
+	{return {
+		$value: [
+			...body,
+			...tail?[tail]:[]
+			]
+			.map(([_1,key,_2,colon,_3,el])=>[key,el.$value])
+			.reduce((obj,[k,v])=>({...obj, [k]:v}),{}),
+		$strings:[
+			"[",
+			..._0,
+			...leading?[...leading[0], leading[1]]:[],
+			...[
+				...body,
+				...tail?[tail]:[]
+				]
+				.map(([_1, key, _2, colon, _3, bodyEl, _4, comma, _5], i) =>
+					[`${key}`,	..._1, key,		..._2, colon, ..._3, ...bodyEl.$strings, ..._4, comma, ..._5 ].filter(Boolean)
+					),
+			..._last,
+			"]"
+			].filter(Boolean)
+		}}
+
+doubleSemiBlockElement =
+	chars:([^;] / ( ";" [^;] ))* ";;" 
+	//Hmm: Is a block whose last character is a ';' accepted by native parser?
+	{return {
+		$value: chars.join(''),
+		$strings: ["@",";;"]
+		}}
+
+quotedStringElement =
+	"\"" chars:( stringLiteralCharacter / stringEscapedCharacter )* "\""
+    {return {
+		$value: chars.join(''),
+		$strings: ['"', "@", '"']
+		}}
+stringLiteralCharacter = [^"\\]
+stringEscapedCharacter = "\\" ch:. {return ch;}
+
+atomElement = 
+	chars:[-+_a-zA-Z0-9\.]+ maybeStar:"*"? 
+	{
+	const str = chars.join('') + (maybeStar||'');
+	return {
+		$strings: ["@"],
+		$value: str=="yes" ? true
+			: str=="no" ? false
+			: str
+		}}
+
+stringOrAtomElement = quotedStringElement / atomElement
+
+atom = chars:[-+_a-zA-Z0-9\.]+ {return chars.join('')}
+blockAtom = blockType:("sql"/"html"/"expr") chars:[-_a-zA-Z0-9]* {return blockType+chars.join('')}
+
+_  = (whitespace / comment)* //{return {strings};}
+_ln = (inlineWhitespace / comment)*
+
+whitespace = chars:[ \t\n\r]+ {return chars.join('');}
+inlineWhitespace = chars:[ \t]+ {return chars.join('');}
+comment = "#" chars:[^\n\r]* newline:[\n\r]? {return "#" + chars.join('') + (newline||'')}
