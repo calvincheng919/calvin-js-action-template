@@ -11,7 +11,7 @@ async function run() {
   // readWriteTestFile();
   try {
     let workingDirectory = core.getInput("working-directory", { required: false })
-    process.chdir('../')
+    process.chdir('../json-tests')
     let cwd = workingDirectory ? resolve(workingDirectory) : `${process.cwd()}/main`
     const CWD = cwd + sep
     // console.log(CWD)
