@@ -10,7 +10,7 @@ const process = require('process')
 const ajv = new Ajv()
 process.chdir('../')
 const cwd = process.cwd();
-const marketplaceRaw = fs.readFileSync(`${cwd}/marketplace.json`, 'utf8');
+const marketplaceRaw = fs.readFileSync(`${cwd}/main/marketplace.json`, 'utf8');
 
 try {
     var marketplace = JSON.parse(marketplaceRaw)
@@ -26,23 +26,23 @@ let schema = {
 describe('Marketplace Automation Tests', ()=> {
 
     test('License File Exists', ()=> {
-        const fileExists = fs.existsSync(`${cwd}/LICENSE`);
+        const fileExists = fs.existsSync(`${cwd}/main/LICENSE`);
         expect(fileExists).toBe(true);
     })
     test('README File Exists', ()=> {
-        const fileExists = fs.existsSync(`${cwd}/README.md`);
+        const fileExists = fs.existsSync(`${cwd}/main/README.md`);
         expect(fileExists).toBe(true);
     })
     test('Marketplace JSON Exists', ()=> {
-        const fileExists = fs.existsSync(`${cwd}/marketplace.json`);
+        const fileExists = fs.existsSync(`${cwd}/main/marketplace.json`);
         expect(fileExists).toBe(true);
     })
     test('Manifest File Exists', ()=> {
-        const fileExists = fs.existsSync(`${cwd}/manifest.lkml`);
+        const fileExists = fs.existsSync(`${cwd}/main/manifest.lkml`);
         expect(fileExists).toBe(true);
     })
     test('At Least One Dashboard File Exists', ()=> {
-        const files = fs.readdirSync(`${cwd}/dashboards/`);
+        const files = fs.readdirSync(`${cwd}/main/dashboards/`);
         dashboardFiles = files.filter( item => {
             return item.includes('dashboard.lookml')
         })
@@ -109,7 +109,7 @@ describe('Marketplace.json Schema:', ()=> {
 describe('Testing constants:', ()=>{
     test( 'Constants Match Between Manifest and Marketplace', async ()=>{
         result = await lookmlParser.parseFiles({
-            source:  `${cwd}/manifest.lkml`,
+            source:  `${cwd}/main/manifest.lkml`,
             fileOutput: "by-type",
             globOptions: {},
             readFileOptions: {encoding:"utf-8"},
@@ -142,9 +142,9 @@ describe('Testing constants:', ()=>{
 
 
 describe('Verify File Extensions: ', ()=> {
-    const rootFiles = fs.readdirSync(`${cwd}`);
-    const viewsFolderExists = fs.existsSync(`${cwd}/views`)
-    const exploresFolderExists = fs.existsSync(`${cwd}/explores`)
+    const rootFiles = fs.readdirSync(`${cwd}/main`);
+    const viewsFolderExists = fs.existsSync(`${cwd}/main/views`)
+    const exploresFolderExists = fs.existsSync(`${cwd}/main/explores`)
 
     test('Model file exists and has extension .lkml', ()=> {
         modelFile = rootFiles.filter( item => {
@@ -158,7 +158,7 @@ describe('Verify File Extensions: ', ()=> {
 
     if(viewsFolderExists) {
         test('Views have extension .lkml', ()=> {
-            const files = fs.readdirSync(`${cwd}/views`)
+            const files = fs.readdirSync(`${cwd}/main/views`)
             const badExtViewFiles = files.filter( item => {
                 return item.includes('view') && path.extname(item) != '.lkml'
             })
@@ -172,7 +172,7 @@ describe('Verify File Extensions: ', ()=> {
 
     if(exploresFolderExists) {
         test('Explores have extension .lkml', ()=> {
-            const files = fs.readdirSync(`${cwd}/explores`)
+            const files = fs.readdirSync(`${cwd}/main/explores`)
             const badExtExploreFiles = files.filter( item => {
                 return item.includes('explore') && path.extname(item) != '.lkml'
             })
