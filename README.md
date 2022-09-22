@@ -1,116 +1,32 @@
-# Create a JavaScript Action
+# Marketplace Automation Test Repo
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+This repository contains infomation and tests meant to streamline the validation of Looker Marketplace projects submitted by third party developers of Custom Visualiztions, Blocks and other Looker custom projects. This testing repo validates Looker specific files.
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+## Tools
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.
+1. Jest
+2. Test Reporter - Will report test results in GitHub Actions 
+3. GitHub Actions CI - Will run tests on PR or Push
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+## What will be Tested
+1. Existence of key files
+    - README.MD 
+    - LICENSE
+    - One *.dashboard.lookml file 
+2. Valid Marketplace.json file
+3. Constants exist and match in:
+    - Manifest.lkml
+    - Marketplace.json
+4. Constants are unique in Marketplace.json
+5. Constants Labels are unique in Marketplace.json
+6. File extensions for model/views are `.lkml` and not `.lookml`
 
-## Create an action from this template
+## Setup
 
-Click the `Use this Template` and provide the new repo details for your action
+1. Add the folder named `/.github/workflows` to the Looker repo to be tested. This tells GitHub you have a workflow to run.
 
-## Code in Main
+2. Upload `marketplace_automation.yml` from this repo to `/.github/workflows` folder of the target Looker repo to be tested.
 
-Install the dependencies
+3. Commit and PR to GitHub.
 
-```bash
-npm install
-```
-
-Run the tests :heavy_check_mark:
-
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-const core = require('@actions/core');
-...
-
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Package for distribution
-
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
-
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
-
-Run prepare
-
-```bash
-npm run prepare
-```
-
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-git checkout -b v1
-git commit -a -m "v1 release"
-```
-
-```bash
-git push origin v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Usage
-
-You can now consume the action by referencing the v1 branch
-
-```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
+4. On GitHub Actions tab, see the CI execution flow and results of tests.

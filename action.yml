@@ -1,17 +1,5 @@
 name: 'Calvin JS Action Test'
 description: 'Calvin JS Action Test'
-inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
-    required: true
-    default: '1000'
-  working-directory: 
-    default: ''
-outputs:
-  time: # output will be available to future steps
-    description: 'The current time after waiting'
-  dir:
-    description: 'current directory'
 runs:
   using: 'node16'
   main: 'dist/index.js'

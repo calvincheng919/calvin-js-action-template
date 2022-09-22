@@ -35,7 +35,7 @@ describe('Marketplace Automation Tests', ()=> {
         expect(fileExists).toBe(true);
     })
     test('README File Exists', ()=> {
-        const fileExists = fs.existsSync(\`\${cwd}/readme.md\`);
+        const fileExists = fs.existsSync(\`\${cwd}/README.md\`);
         expect(fileExists).toBe(true);
     })
     test('Marketplace JSON Exists', ()=> {
