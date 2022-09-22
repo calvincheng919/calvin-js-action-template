@@ -3095,14 +3095,15 @@ async function run() {
   // readWritePackage();
   // readWriteTestFile();
   try {
-    let workingDirectory = core.getInput("working-directory", { required: false })
     process.chdir('json-tests')
-    let cwd = workingDirectory ? resolve(workingDirectory) : `${process.cwd()}/main`
-    const CWD = cwd + sep
+    // let cwd = workingDirectory ? resolve(workingDirectory) : `${process.cwd()}/main`
+    // const CWD = cwd + sep
     // console.log(process.cwd())
     // console.log(CWD)
-    await exec.exec(`npm install`,[], {CWD})
-    await exec.exec(`npm test`,[], {CWD})
+    // await exec.exec(`npm install`,[], {CWD})
+    // await exec.exec(`npm test`,[], {CWD})
+    await exec.exec(`npm install`)
+    await exec.exec(`npm test`)
   } catch (error) {
     core.setFailed(error.message);
   }
