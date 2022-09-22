@@ -11,8 +11,10 @@ async function run() {
   // readWriteTestFile();
   try {
     let workingDirectory = core.getInput("working-directory", { required: false })
-    let cwd = workingDirectory ? resolve(workingDirectory) : process.cwd()
+    process.chdir('../')
+    let cwd = workingDirectory ? resolve(workingDirectory) : `${process.cwd()}/main`
     const CWD = cwd + sep
+    // console.log(CWD)
     await exec.exec(`npm install`,[], {CWD})
     await exec.exec(`npm test`,[], {CWD})
   } catch (error) {
