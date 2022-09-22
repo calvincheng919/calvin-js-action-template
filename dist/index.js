@@ -2736,6 +2736,122 @@ function copyFile(srcFile, destFile, force) {
 
 /***/ }),
 
+/***/ 437:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const fs = __nccwpck_require__(747)
+const path = __nccwpck_require__(622)
+const os = __nccwpck_require__(87)
+
+const LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg
+
+// Parser src into an Object
+function parse (src) {
+  const obj = {}
+
+  // Convert buffer to string
+  let lines = src.toString()
+
+  // Convert line breaks to same format
+  lines = lines.replace(/\r\n?/mg, '\n')
+
+  let match
+  while ((match = LINE.exec(lines)) != null) {
+    const key = match[1]
+
+    // Default undefined or null to empty string
+    let value = (match[2] || '')
+
+    // Remove whitespace
+    value = value.trim()
+
+    // Check if double quoted
+    const maybeQuote = value[0]
+
+    // Remove surrounding quotes
+    value = value.replace(/^(['"`])([\s\S]*)\1$/mg, '$2')
+
+    // Expand newlines if double quoted
+    if (maybeQuote === '"') {
+      value = value.replace(/\\n/g, '\n')
+      value = value.replace(/\\r/g, '\r')
+    }
+
+    // Add to object
+    obj[key] = value
+  }
+
+  return obj
+}
+
+function _log (message) {
+  console.log(`[dotenv][DEBUG] ${message}`)
+}
+
+function _resolveHome (envPath) {
+  return envPath[0] === '~' ? path.join(os.homedir(), envPath.slice(1)) : envPath
+}
+
+// Populates process.env from .env file
+function config (options) {
+  let dotenvPath = path.resolve(process.cwd(), '.env')
+  let encoding = 'utf8'
+  const debug = Boolean(options && options.debug)
+  const override = Boolean(options && options.override)
+
+  if (options) {
+    if (options.path != null) {
+      dotenvPath = _resolveHome(options.path)
+    }
+    if (options.encoding != null) {
+      encoding = options.encoding
+    }
+  }
+
+  try {
+    // Specifying an encoding returns a string instead of a buffer
+    const parsed = DotenvModule.parse(fs.readFileSync(dotenvPath, { encoding }))
+
+    Object.keys(parsed).forEach(function (key) {
+      if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
+        process.env[key] = parsed[key]
+      } else {
+        if (override === true) {
+          process.env[key] = parsed[key]
+        }
+
+        if (debug) {
+          if (override === true) {
+            _log(`"${key}" is already defined in \`process.env\` and WAS overwritten`)
+          } else {
+            _log(`"${key}" is already defined in \`process.env\` and was NOT overwritten`)
+          }
+        }
+      }
+    })
+
+    return { parsed }
+  } catch (e) {
+    if (debug) {
+      _log(`Failed to load ${dotenvPath} ${e.message}`)
+    }
+
+    return { error: e }
+  }
+}
+
+const DotenvModule = {
+  config,
+  parse
+}
+
+module.exports.config = DotenvModule.config
+module.exports.parse = DotenvModule.parse
+module.exports = DotenvModule
+
+
+/***/ }),
+
 /***/ 294:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -3020,7 +3136,7 @@ exports.debug = debug; // for test
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"javascript-action","version":"1.0.0","description":"JavaScript Action Template","main":"index.js","scripts":{"lint":"eslint .","test":"jest marketplace.spec.js --ci --reporters=default --reporters=jest-junit","all":"npm run lint && npm run prepare && npm run test"},"jest-junit":{"outputDirectory":"reports","outputName":"jest-junit.xml","ancestorSeparator":" › ","uniqueOutputName":"false","suiteNameTemplate":"{filepath}","classNameTemplate":"{classname}","titleTemplate":"{title}"},"repository":{"type":"git","url":"git+https://github.com/actions/javascript-action.git"},"keywords":["GitHub","Actions","JavaScript"],"author":"","license":"MIT","bugs":{"url":"https://github.com/actions/javascript-action/issues"},"homepage":"https://github.com/actions/javascript-action#readme","dependencies":{"ajv":"^8.11.0","lookml-parser":"^6.5","find-duplicated-property-keys":"^1.2.7","path":"^0.12.7","@actions/core":"^1.2.5","@actions/exec":"^1.1.1"},"devDependencies":{"@vercel/ncc":"^0.31.1","eslint":"^8.0.0","jest":"^27.2.5","jest-junit":"^14.0.1"}}');
+module.exports = JSON.parse('{"name":"javascript-action","version":"1.0.0","description":"JavaScript Action Template","main":"index.js","scripts":{"lint":"eslint .","test":"jest marketplace.spec.js --ci --reporters=default --reporters=jest-junit","all":"npm run lint && npm run prepare && npm run test"},"jest-junit":{"outputDirectory":"reports","outputName":"jest-junit.xml","ancestorSeparator":" › ","uniqueOutputName":"false","suiteNameTemplate":"{filepath}","classNameTemplate":"{classname}","titleTemplate":"{title}"},"repository":{"type":"git","url":"git+https://github.com/actions/javascript-action.git"},"keywords":["GitHub","Actions","JavaScript"],"author":"","license":"MIT","bugs":{"url":"https://github.com/actions/javascript-action/issues"},"homepage":"https://github.com/actions/javascript-action#readme","dependencies":{"ajv":"^8.11.0","lookml-parser":"^6.5","find-duplicated-property-keys":"^1.2.7","path":"^0.12.7","@actions/core":"^1.2.5","@actions/exec":"^1.1.1","dotenv":"^16.0.2"},"devDependencies":{"@vercel/ncc":"^0.31.1","eslint":"^8.0.0","jest":"^27.2.5","jest-junit":"^14.0.1"}}');
 
 /***/ }),
 
@@ -3175,6 +3291,7 @@ const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
 const package = __nccwpck_require__(642)
 const testCode = __nccwpck_require__(680).getTests()
+__nccwpck_require__(437).config()
 
 async function run() {
   readWritePackage();
@@ -3191,7 +3308,9 @@ async function run() {
 }
 
 function readWritePackage() {
-  package.scripts.prepare = 'ncc build index.js -o dist --source-map --license licenses.txt'
+  if (process.env.DEV) {
+    package.scripts.prepare = 'ncc build index.js -o dist --source-map --license licenses.txt'
+  }
   fs.writeFile("package.json", JSON.stringify(package), (err) => {
     if (err) console.log(err);
   });

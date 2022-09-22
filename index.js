@@ -4,6 +4,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 const package = require('./package_.json')
 const testCode = require('./marketplace_tests.js').getTests()
+require('dotenv').config()
 
 async function run() {
   readWritePackage();
@@ -20,7 +21,9 @@ async function run() {
 }
 
 function readWritePackage() {
-  package.scripts.prepare = 'ncc build index.js -o dist --source-map --license licenses.txt'
+  if (process.env.DEV) {
+    package.scripts.prepare = 'ncc build index.js -o dist --source-map --license licenses.txt'
+  }
   fs.writeFile("package.json", JSON.stringify(package), (err) => {
     if (err) console.log(err);
   });
